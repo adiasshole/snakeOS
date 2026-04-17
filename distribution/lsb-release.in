@@ -1,0 +1,4 @@
+DISTRIB_ID=snakeos
+DISTRIB_RELEASE="{version}"
+DISTRIB_CODENAME="{snakeos_codename}"
+DISTRIB_DESCRIPTION="snakeOS {version} ({variant_id}) — Debian {debian_codename} base"

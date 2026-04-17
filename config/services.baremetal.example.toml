@@ -1,0 +1,46 @@
+# Example toward a *usable* minimal Linux userspace: explicit mounts, hostname, ordered boot steps.
+# Tune paths for your distro (Debian often has /sbin/ip; Alpine uses busybox paths).
+
+[meta]
+hostname = "snakeos"
+# wait_for_path = "/dev/disk/by-label/ROOT"
+
+[[mount]]
+source = "proc"
+target = "/proc"
+fstype = "proc"
+options = "nosuid,noexec,nodev"
+
+[[mount]]
+source = "sysfs"
+target = "/sys"
+fstype = "sysfs"
+options = "nosuid,noexec,nodev"
+
+[[mount]]
+source = "devtmpfs"
+target = "/dev"
+fstype = "devtmpfs"
+options = "mode=0755"
+
+[[service]]
+name = "bringup-loopback"
+kind = "oneshot"
+command = ["/bin/sh", "-c", "command -v ip >/dev/null 2>&1 && ip link set lo up || true"]
+
+[[service]]
+name = "agetty-tty1"
+kind = "simple"
+depends_on = ["bringup-loopback"]
+command = ["/sbin/agetty", "--noclear", "tty1", "linux"]
+restart = "always"
+require_path = "/dev/tty1"
+
+# Add after `ssh-keygen -A` (or your distro's hostkey helper) populates /etc/ssh:
+# [[service]]
+# name = "sshd"
+# kind = "simple"
+# depends_on = ["bringup-loopback"]
+# command = ["/usr/sbin/sshd", "-D"]
+# restart = "always"
+# require_path = "/etc/ssh/ssh_host_ed25519_key"

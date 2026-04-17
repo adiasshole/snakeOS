@@ -1,0 +1,13 @@
+# Internal ordering smoke test: oneshot runs before dependent long-running service.
+
+[[service]]
+name = "seed"
+kind = "oneshot"
+command = ["/bin/sh", "-c", "exit 0"]
+
+[[service]]
+name = "sleepy"
+kind = "simple"
+depends_on = ["seed"]
+command = ["/bin/sh", "-c", "sleep 3600"]
+restart = "always"

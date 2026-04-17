@@ -1,0 +1,15 @@
+NAME="snakeOS"
+VERSION="{version}"
+ID=snakeos
+ID_LIKE=debian
+VERSION_ID="{version}"
+VERSION_CODENAME="{snakeos_codename}"
+PRETTY_NAME="snakeOS {version} ({variant_id})"
+VARIANT="{variant}"
+VARIANT_ID="{variant_id}"
+HOME_URL="{home_url}"
+DOCUMENTATION_URL="{documentation_url}"
+SUPPORT_URL="{support_url}"
+BUG_REPORT_URL="{bug_report_url}"
+BUILD_ID="{build_id}"
+DEBIAN_BASE_CODENAME="{debian_codename}"

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling>=1.21.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "snakeos"
+version = "0.1.0"
+description = "Python-first Linux distro userspace: init, supervision, and declarative desktop/server policy on a normal kernel."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "snakeOS contributors" }]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["ruff>=0.4.0"]
+
+[project.scripts]
+snakeos = "snakeos.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["snakeos"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"distribution" = "snakeos/dist_bundled"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

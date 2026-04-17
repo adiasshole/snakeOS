@@ -1,0 +1,103 @@
+# Desktop-oriented snakeOS profile: Wayland session stack + networking + audio.
+# Paths are Debian-style; adjust for your distro. Many services use `require_path` so missing
+# packages or configs fail soft until you install them on the rootfs.
+
+[meta]
+hostname = "snakeos"
+
+[[mount]]
+source = "proc"
+target = "/proc"
+fstype = "proc"
+options = "nosuid,noexec,nodev"
+
+[[mount]]
+source = "sysfs"
+target = "/sys"
+fstype = "sysfs"
+options = "nosuid,noexec,nodev"
+
+[[mount]]
+source = "devtmpfs"
+target = "/dev"
+fstype = "devtmpfs"
+options = "mode=0755"
+
+[[mount]]
+source = "tmpfs"
+target = "/run"
+fstype = "tmpfs"
+options = "mode=0755,nosuid,nodev,size=512M"
+
+[[mount]]
+source = "tmpfs"
+target = "/tmp"
+fstype = "tmpfs"
+options = "mode=1777,nosuid,nodev,size=2G"
+
+[[service]]
+name = "bringup-loopback"
+kind = "oneshot"
+command = ["/bin/sh", "-c", "command -v ip >/dev/null 2>&1 && ip link set lo up || true"]
+
+# --- Core session / Wayland (seatd is the usual non-logind path) ---
+
+[[service]]
+name = "seatd"
+kind = "simple"
+depends_on = ["bringup-loopback"]
+command = ["/usr/bin/seatd", "-g", "video"]
+restart = "always"
+require_path = "/usr/bin/seatd"
+
+[[service]]
+name = "dbus-system"
+kind = "simple"
+depends_on = ["seatd"]
+command = ["/usr/bin/dbus-daemon", "--system", "--nofork", "--nopidfile"]
+restart = "always"
+require_path = "/etc/dbus-1/system.conf"
+
+# --- Networking (pick one stack on a real rootfs) ---
+
+[[service]]
+name = "NetworkManager"
+kind = "simple"
+depends_on = ["dbus-system"]
+command = ["/usr/sbin/NetworkManager", "--no-daemon"]
+restart = "always"
+require_path = "/usr/sbin/NetworkManager"
+
+# --- Graphical login → Wayland compositor (requires /etc/greetd/config.toml) ---
+
+[[service]]
+name = "greetd"
+kind = "simple"
+depends_on = ["dbus-system", "seatd"]
+command = ["/usr/bin/greetd"]
+restart = "always"
+require_path = "/etc/greetd/config.toml"
+
+# --- Optional: system PipeWire (many setups run audio in the user session instead) ---
+
+# [[service]]
+# name = "pipewire"
+# kind = "simple"
+# depends_on = ["dbus-system"]
+# command = ["/usr/bin/pipewire"]
+# restart = "always"
+# require_path = "/usr/bin/pipewire"
+
+# --- Fallback console login (even when greetd owns another VT) ---
+
+[[service]]
+name = "agetty-tty2"
+kind = "simple"
+depends_on = ["bringup-loopback"]
+command = ["/sbin/agetty", "--noclear", "tty2", "linux"]
+restart = "always"
+require_path = "/dev/tty2"
+
+# --- udev (hotplug, firmware, /dev/disk/by-*): Debian’s udevd is tied to the systemd ecosystem.
+# For a snakeOS-only PID 1 distro you typically either (a) run systemd as PID 1 and use snakeOS
+# as a policy layer, or (b) integrate eudev/standalone udevd with extra work. Not started here.

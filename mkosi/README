@@ -1,0 +1,14 @@
+snakeOS mkosi (optional, Linux hosts)
+
+1. Build a rootfs (recommended: systemd standard edition for mainstream compatibility):
+
+   sudo ./scripts/build-rootfs-debian-standard.sh
+
+2. Adjust `mkosi/mkosi.conf` if your rootfs directory differs.
+3. From the repository root:
+
+   mkosi --directory mkosi
+
+mkosi evolves quickly; treat this as a starting point. The standard rootfs
+already includes a Debian kernel metapackage and GRUB EFI binaries; the live
+installer script finishes bootloader installation onto real disks.

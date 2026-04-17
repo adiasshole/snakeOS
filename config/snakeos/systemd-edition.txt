@@ -1,0 +1,8 @@
+This rootfs uses systemd as PID 1 (standard Linux userspace).
+
+The snakeOS Python init (`python -m snakeos init`) is not used as /sbin/init here.
+snakeOS is still installed for tooling, branding (/etc/os-release), and future
+policy modules (systemd units, generators, or admin CLIs).
+
+For the experimental Python-as-PID1 profile, build with scripts/build-rootfs-debian*.sh
+without the standard edition script.

@@ -1,0 +1,5 @@
+# Example apt source for a snakeOS package repository (replace URL and components).
+# After you publish signed .deb packages or an apt archive, install this file as:
+#   /etc/apt/sources.list.d/snakeos.list
+
+# deb [signed-by=/usr/share/keyrings/snakeos-archive-keyring.gpg] https://apt.example.invalid/snakeos bookworm main

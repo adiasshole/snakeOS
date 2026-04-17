@@ -1,0 +1,21 @@
+# Copy to /etc/snakeos/services.toml (or pass --config) on a real system.
+# See also: services.baremetal.example.toml (explicit mounts + hostname + bring-up oneshots).
+
+[meta]
+# hostname = "snakeos"
+# Optional: if set, snakeos waits for this path before starting services (e.g. disk ready).
+# wait_for_path = "/dev/disk/by-label/ROOT"
+
+[[service]]
+name = "agetty-tty1"
+# Typical Linux console login (needs agetty + login from util-linux).
+command = ["/sbin/agetty", "--noclear", "tty1", "linux"]
+restart = "always"
+# Only start when this TTY device exists (skip in minimal containers).
+require_path = "/dev/tty1"
+
+[[service]]
+name = "loop-keepalive"
+# Harmless demo for containers/QEMU smoke tests when no real TTY exists.
+command = ["/bin/sh", "-c", "while true; do sleep 3600; done"]
+restart = "always"
